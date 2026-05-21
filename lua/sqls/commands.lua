@@ -34,15 +34,17 @@ end
 ---@param show_vertical? '-show-vertical'
 ---@param line1? integer
 ---@param line2? integer
-function M.exec(client_id, command, smods, range_given, show_vertical, line1, line2)
+---@param bufnr? integer buffer to use for URI and range (defaults to 0)
+function M.exec(client_id, command, smods, range_given, show_vertical, line1, line2, bufnr)
     local client = assert(vim.lsp.get_client_by_id(client_id))
+    bufnr = bufnr or 0
 
     local range
     if range_given then
         range = vim.lsp.util.make_given_range_params(
             { line1, 0 },
             { line2, math.huge },
-            0,
+            bufnr,
             client.offset_encoding
         ).range
         range['end'].character = range['end'].character - 1
@@ -52,7 +54,7 @@ function M.exec(client_id, command, smods, range_given, show_vertical, line1, li
         'workspace/executeCommand',
         {
             command = command,
-            arguments = { vim.uri_from_bufnr(0), show_vertical },
+            arguments = { vim.uri_from_bufnr(bufnr), show_vertical },
             range = range,
         },
         make_show_results_handler(smods)
@@ -64,7 +66,7 @@ end
 ---@param show_vertical? '-show-vertical'
 ---@return sqls_operatorfunc
 local function make_query_mapping(show_vertical)
-    return function(type, client_id)
+    return function(type, client_id, bufnr)
         local range
         local _, lnum1, col1, _ = unpack(fn.getpos("'["))
         local _, lnum2, col2, _ = unpack(fn.getpos("']"))
@@ -74,12 +76,13 @@ local function make_query_mapping(show_vertical)
         end
 
         local client = assert(vim.lsp.get_client_by_id(client_id))
+        bufnr = bufnr or 0
 
         if type == 'line' then
             range = vim.lsp.util.make_given_range_params(
                 { lnum1, 0 },
                 { lnum2, math.huge },
-                0,
+                bufnr,
                 client.offset_encoding
             ).range
             range['end'].character = range['end'].character - 1
@@ -87,7 +90,7 @@ local function make_query_mapping(show_vertical)
             range = vim.lsp.util.make_given_range_params(
                 { lnum1, col1 - 1 },
                 { lnum2, col2 - 1 },
-                0,
+                bufnr,
                 client.offset_encoding
             ).range
         end
@@ -96,7 +99,7 @@ local function make_query_mapping(show_vertical)
             'workspace/executeCommand',
             {
                 command = 'executeQuery',
-                arguments = { vim.uri_from_bufnr(0), show_vertical },
+                arguments = { vim.uri_from_bufnr(bufnr), show_vertical },
                 range = range,
             },
             make_show_results_handler()
