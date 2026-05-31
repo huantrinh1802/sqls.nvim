@@ -83,7 +83,6 @@ end
 return {
     cmd = { 'sqls' },
     filetypes = { 'sql', 'mysql' },
-    single_file_support = false,
     commands = {
         executeQuery = function(_, client)
             require('sqls.commands').exec(client.client_id, 'executeQuery')
