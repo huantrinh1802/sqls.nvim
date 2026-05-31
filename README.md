@@ -4,18 +4,9 @@ Neovim plugin for [sqls](https://github.com/lighttiger2505/sqls) that leverages 
 
 ## Installation
 
-- [packer.nvim](https://github.com/wbthomason/packer.nvim)
-    ```lua
-    use 'nanotee/sqls.nvim'
-    ```
-- [paq-nvim](https://github.com/savq/paq-nvim)
-    ```lua
-    paq 'nanotee/sqls.nvim'
-    ```
-- [vim-plug](https://github.com/junegunn/vim-plug)
-    ```vim
-    Plug 'nanotee/sqls.nvim'
-    ```
+```lua
+vim.pack.add({'https://github.com/nanotee/sqls.nvim'})
+```
 
 ## Usage
 
